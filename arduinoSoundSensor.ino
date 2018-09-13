@@ -6,49 +6,79 @@
 #include <RunningStatistics.h>
 
 // sensor
-const int Csen = 0;
+#define data 5
+#define clk 4
 
 // sensor state
-int Cstate = 0;
+float Cstate = 0;
 
-float data;
-float hz = 3000.0;
+//test
+const int maxloop = 100;
+const int maxdac = 4095;
+const int maxrate = 2000 / maxloop;
+const int maxset = maxdac / 2;
+const int outloop = 10000 / maxloop;
+int count = 0;
+long c,b;
 
-static float y[2] = {0};
+float highdata;
+float lowdata;
+float hz = 20000.0;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   // sensor set
-  pinMode(Csen,INPUT);
-
-  
+  pinMode(data,INPUT);
+  pinMode(clk,OUTPUT);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
 
-  ReadVoiceSensor();
-  RCFilter();
-  LowPassFilter();
-  Serial.println(data);
- // Serial.println(y[1]);
+//  while(1){
+//
+//  for(int i= 0;i< outloop;i++){
+//    count = 0;
+//    for(int a = 0;a< maxloop;a++){
+//      digitalWrite(clk,LOW);
+//      c++;
+//      b++;
+//      if(digitalRead(data) == HIGH){
+//        count++;
+//      }else{
+//        count--;
+//      }
+//      if(a < maxloop - 1){
+//        digitalWrite(clk,HIGH);
+//        digitalWrite(clk,HIGH);
+//      }
+//    }
+//    count = count * maxrate + maxset;
+//  }
+//  Serial.println(count);
+//  }
 
+  
+
+//  digitalWrite(clk,LOW);
+
+  
+
+  Cstate = analogRead(data);
+  //LowPassFilter(Cstate);
+  Serial.println(Cstate);
+  //delay(100);
 }
 
-void ReadVoiceSensor(){
-  Cstate = (float)analogRead(Csen);
-}
+//void ReadVoiceSensor(){
+//  Cstate = analogRead(Csen);
+//  data = (float)Cstate;
+//}
 
-void RCFilter(){
-  y[1] = 0.8 * y[0] + 0.2 * Cstate;
-  y[0] = y[1];
-
-}
-
-void LowPassFilter(){
+void LowPassFilter(float in){
   FilterOnePole lowpassFilter( LOWPASS, hz );
-  data = lowpassFilter.input(Cstate);
+  Cstate = lowpassFilter.input(in);
 }
 
