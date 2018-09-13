@@ -11,7 +11,6 @@
 
 // sensor state
 float Cstate = 0;
-int a ;
 
 //test
 const int maxloop = 100;
