@@ -1,12 +1,7 @@
-#include <FilterDerivative.h>
-#include <FilterOnePole.h>
-#include <Filters.h>
-#include <FilterTwoPole.h>
-#include <FloatDefine.h>
-#include <RunningStatistics.h>
+#include <MsTimer2.h>
 
 // Mic Sensor
-#define mic 0
+#define mic 13
 #define LR 10
 
 // Clock Sensor
@@ -24,7 +19,10 @@ float hz = 1000.0;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200);
+  Serial.begin(9600);
+
+  MsTimer2::set(0.00001,timer);
+  MsTimer2::start();
 
   PinSet();
   SensorSet();
@@ -42,7 +40,7 @@ void PinSet(){
 }
 
 void SensorSet(){
-  digitalWrite(LR,LOW);
+  digitalWrite(LR,HIGH);
   digitalWrite(clkA,HIGH);
   digitalWrite(clkB,LOW);
   digitalWrite(clkC,LOW);
@@ -52,16 +50,16 @@ void SensorSet(){
 void loop() {
   // put your main code here, to run repeatedly:
   
-  a = analogRead(mic);
-  LowPassFilter(a);
-
+  //a = digitalRead(mic);
+  //LowPassFilter(a);
+  
   //Serial.println(a);
-  Serial.println(Cstate);
+  //Serial.println(Cstate);
 
 }
 
-void LowPassFilter(float in){
-  FilterOnePole lowpassFilter( LOWPASS, hz );
-  Cstate = lowpassFilter.input(in);
+void timer(){
+  a = digitalRead(mic);
+  Serial.println(a);
 }
 
