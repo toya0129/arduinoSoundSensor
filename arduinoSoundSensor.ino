@@ -10,6 +10,8 @@
 #define clkC 3
 #define clkST 6
 
+#define clk 3
+
 // sensor state
 float Cstate = 0;
 float a = 0;
@@ -21,7 +23,7 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
 
-  MsTimer2::set(0.00001,timer);
+  MsTimer2::set(0.000001,timer);
   MsTimer2::start();
 
   PinSet();
@@ -37,6 +39,8 @@ void PinSet(){
   pinMode(clkB,OUTPUT);
   pinMode(clkC,OUTPUT);
   pinMode(clkST,OUTPUT);
+
+  pinMode(clk,INPUT);
 }
 
 void SensorSet(){
@@ -49,13 +53,12 @@ void SensorSet(){
 
 void loop() {
   // put your main code here, to run repeatedly:
-  
+
   //a = digitalRead(mic);
   //LowPassFilter(a);
   
   //Serial.println(a);
   //Serial.println(Cstate);
-
 }
 
 void timer(){
