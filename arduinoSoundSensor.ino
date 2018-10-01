@@ -6,7 +6,7 @@
 #include <RunningStatistics.h>
 
 // Mic Sensor
-#define mic 13
+#define mic 0
 #define LR 10
 
 // Clock Sensor
@@ -20,7 +20,7 @@ float Cstate = 0;
 float a = 0;
 float c = 0;
 float low = 0;
-float hz = 2000.0;
+float hz = 1000.0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -28,7 +28,7 @@ void setup() {
 
   PinSet();
   SensorSet();
-
+  
 }
 
 void PinSet(){
@@ -42,7 +42,7 @@ void PinSet(){
 }
 
 void SensorSet(){
-//  digitalWrite(LR,HIGH);
+  digitalWrite(LR,LOW);
   digitalWrite(clkA,HIGH);
   digitalWrite(clkB,LOW);
   digitalWrite(clkC,LOW);
@@ -52,11 +52,11 @@ void SensorSet(){
 void loop() {
   // put your main code here, to run repeatedly:
   
-  a = digitalRead(mic);
-  //LowPassFilter(a);
+  a = analogRead(mic);
+  LowPassFilter(a);
 
-  Serial.println(a);
-  //Serial.println(Cstate);
+  //Serial.println(a);
+  Serial.println(Cstate);
 
 }
 
