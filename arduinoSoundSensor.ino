@@ -1,7 +1,7 @@
 #include <MsTimer2.h>
 
 // Mic Sensor
-#define mic 13
+#define mic A5
 #define LR 10
 
 // Clock Sensor
@@ -21,7 +21,7 @@ float hz = 1000.0;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(2000000);
 
   MsTimer2::set(0.000001,timer);
   MsTimer2::start();
@@ -62,7 +62,7 @@ void loop() {
 }
 
 void timer(){
-  a = digitalRead(mic);
+  a = analogRead(mic);
   Serial.println(a);
 }
 
