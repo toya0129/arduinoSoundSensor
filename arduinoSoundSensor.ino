@@ -15,15 +15,15 @@
 // sensor state
 float Cstate = 0;
 float a = 0;
-float c = 0;
-float low = 0;
-float hz = 1000.0;
+
+int count = 0;
+float test[10];
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(2000000);
 
-  MsTimer2::set(0.000001,timer);
+  MsTimer2::set(0.6,timer); //6kHz まで
   MsTimer2::start();
 
   PinSet();
@@ -62,7 +62,14 @@ void loop() {
 }
 
 void timer(){
-  a = analogRead(mic);
-  Serial.println(a);
+  test[count] = analogRead(mic);
+  count++;
+  if(count == 10){
+    float sum = 0;
+    for(int i=0;i<10;i++){
+      sum += test[i];
+    }
+    Serial.println(sum/10);
+    count = 0;
+  }
 }
-
