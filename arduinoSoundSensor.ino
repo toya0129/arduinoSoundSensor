@@ -1,34 +1,49 @@
+#include <SoftwareSerial.h>
 #include <MsTimer2.h>
+
+//Serial Raspberry
+SoftwareSerial rasPi(2,3); // rx tx
 
 // Mic Sensor
 #define mic A5
-#define LR 10
+#define LR 13
+
 
 // Clock Sensor
-#define clkA 5
-#define clkB 4
-#define clkC 3
-#define clkST 6
+#define clkA 15 // A1
+#define clkB 16 // A2
+#define clkC 17 // A3
+#define clkST 14 // A0
 
-#define clk 3
+// Out Data
+#define C 4
+#define D 5
+#define E 6
+#define F 7
+#define G 8
+#define A 9
+#define B 10
+#define C2 11
 
-// sensor state
-float Cstate = 0;
-float a = 0;
-
+// Initialize
 int count = 0;
-float test[10];
+double SensorState[10];
+char sendData = "";
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(2000000);
+  
+  Serial.begin(9600);
+  rasPi.begin(9600);
 
-  MsTimer2::set(0.6,timer); //6kHz まで
+  MsTimer2::set(0.2,ReadSensor); // new 5kHz 0.2ms    old 6kHz まで 0.6ms
   MsTimer2::start();
+  
+  rasPi.println("aa");
+  rasPi.println("aa");
 
   PinSet();
   SensorSet();
-  
 }
 
 void PinSet(){
@@ -40,7 +55,14 @@ void PinSet(){
   pinMode(clkC,OUTPUT);
   pinMode(clkST,OUTPUT);
 
-  pinMode(clk,INPUT);
+  pinMode(C,INPUT);
+  pinMode(D,INPUT);
+  pinMode(E,INPUT);
+  pinMode(F,INPUT);
+  pinMode(G,INPUT);
+  pinMode(A,INPUT);
+  pinMode(B,INPUT);
+  pinMode(C2,INPUT);
 }
 
 void SensorSet(){
@@ -53,23 +75,53 @@ void SensorSet(){
 
 void loop() {
   // put your main code here, to run repeatedly:
-
-  //a = digitalRead(mic);
-  //LowPassFilter(a);
-  
-  //Serial.println(a);
-  //Serial.println(Cstate);
+  //sendPC();
 }
 
-void timer(){
-  test[count] = analogRead(mic);
+void ReadSensor(){
+  SensorState[count] = analogRead(mic);
   count++;
   if(count == 10){
-    float sum = 0;
-    for(int i=0;i<10;i++){
-      sum += test[i];
-    }
-    Serial.println(sum/10);
     count = 0;
+    SendRaspberry(SensorState);
+  }
+}
+
+void SendRaspberry(double *data){
+  rasPi.listen();
+  for(int a=0;a<10;a++){
+    rasPi.println(data[a]);
+  }
+}
+
+void sendPC(){
+  if(digitalRead(C) == HIGH){
+    sendData = "C";
+  }
+  else if(digitalRead(D) == HIGH){
+    sendData = "D";
+  }
+  else if(digitalRead(E) == HIGH){
+    sendData = "E";
+  }
+  else if(digitalRead(F) == HIGH){
+    sendData = "F";
+  }
+  else if(digitalRead(G) == HIGH){
+    sendData = "G";
+  }
+  else if(digitalRead(A) == HIGH){
+    sendData = "A";
+  }
+  else if(digitalRead(B) == HIGH){
+    sendData = "B";
+  }
+  else if(digitalRead(C2) == HIGH){
+    sendData = "C2";
+  }
+
+  if(sendData != ""){
+    Serial.println(sendData);
+    sendData = "";
   }
 }
