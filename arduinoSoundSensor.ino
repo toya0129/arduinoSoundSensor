@@ -1,5 +1,6 @@
+#include <FlexiTimer2.h>
+
 #include <SoftwareSerial.h>
-#include <MsTimer2.h>
 
 //Serial Raspberry
 SoftwareSerial rasPi(2,3); // rx tx
@@ -27,17 +28,18 @@ SoftwareSerial rasPi(2,3); // rx tx
 
 // Initialize
 int count = 0;
-double SensorState[10];
+double SensorState[400];
 char sendData = "";
 
 void setup() {
   // put your setup code here, to run once:
   
-  Serial.begin(9600);
-  rasPi.begin(9600);
+  Serial.begin(2000000);
+  rasPi.begin(2000000);
 
-  MsTimer2::set(0.2,ReadSensor); // new 5kHz 0.2ms    old 6kHz まで 0.6ms
-  MsTimer2::start();
+  FlexiTimer2::stop();
+  FlexiTimer2::set(1, 1.0/5000, ReadSensor); // 1s = 5000
+  FlexiTimer2::start();
   
   rasPi.println("aa");
   rasPi.println("aa");
@@ -75,13 +77,13 @@ void SensorSet(){
 
 void loop() {
   // put your main code here, to run repeatedly:
-  //sendPC();
+  sendPC();
 }
 
 void ReadSensor(){
   SensorState[count] = analogRead(mic);
   count++;
-  if(count == 10){
+  if(count == 400){ 
     count = 0;
     SendRaspberry(SensorState);
   }
@@ -89,32 +91,38 @@ void ReadSensor(){
 
 void SendRaspberry(double *data){
   rasPi.listen();
-  for(int a=0;a<10;a++){
+  for(int a = 0;a < 400; a++){
+//    if(data[a] < 10){
+//      Serial.println("CC");
+//      break;
+//    }
     rasPi.println(data[a]);
+    //Serial.println(data[a]);
   }
+  //Serial.println("");
 }
 
 void sendPC(){
   if(digitalRead(C) == HIGH){
-    sendData = "C";
+    sendData = "CC";
   }
   else if(digitalRead(D) == HIGH){
-    sendData = "D";
+    sendData = "DD";
   }
   else if(digitalRead(E) == HIGH){
-    sendData = "E";
+    sendData = "EE";
   }
   else if(digitalRead(F) == HIGH){
-    sendData = "F";
+    sendData = "FF";
   }
   else if(digitalRead(G) == HIGH){
-    sendData = "G";
+    sendData = "GG";
   }
   else if(digitalRead(A) == HIGH){
-    sendData = "A";
+    sendData = "AA";
   }
   else if(digitalRead(B) == HIGH){
-    sendData = "B";
+    sendData = "BB";
   }
   else if(digitalRead(C2) == HIGH){
     sendData = "C2";
