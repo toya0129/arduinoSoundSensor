@@ -1,5 +1,5 @@
+#include <TimerOne.h>
 #include <FlexiTimer2.h>
-
 #include <SoftwareSerial.h>
 
 //Serial Raspberry
@@ -28,18 +28,22 @@ SoftwareSerial rasPi(2,3); // rx tx
 
 // Initialize
 int count = 0;
-double SensorState[400];
-char sendData = "";
+double SensorState[200];
+String sendData = "";
 
 void setup() {
   // put your setup code here, to run once:
-  
-  Serial.begin(2000000);
-  rasPi.begin(2000000);
+
+  //Serial.begin(9600);
+  Serial.begin(115200);
+  //rasPi.begin(115200);
 
   FlexiTimer2::stop();
   FlexiTimer2::set(1, 1.0/5000, ReadSensor); // 1s = 5000
   FlexiTimer2::start();
+
+//  Timer1.initialize(10000);
+//  Timer1.attachInterrupt(sendPC);
   
   rasPi.println("aa");
   rasPi.println("aa");
@@ -77,13 +81,14 @@ void SensorSet(){
 
 void loop() {
   // put your main code here, to run repeatedly:
-  sendPC();
+  //sendPC();
+  //delay(1000);
 }
 
 void ReadSensor(){
   SensorState[count] = analogRead(mic);
   count++;
-  if(count == 400){ 
+  if(count == 200){ 
     count = 0;
     SendRaspberry(SensorState);
   }
@@ -91,15 +96,12 @@ void ReadSensor(){
 
 void SendRaspberry(double *data){
   rasPi.listen();
-  for(int a = 0;a < 400; a++){
-//    if(data[a] < 10){
-//      Serial.println("CC");
-//      break;
-//    }
-    rasPi.println(data[a]);
-    //Serial.println(data[a]);
+  for(int a = 0;a < 200; a++){
+    //rasPi.println(data[a]);
+    Serial.println(data[a]);
+    //Serial.print("\n");
   }
-  //Serial.println("");
+  delay(10);
 }
 
 void sendPC(){
@@ -128,8 +130,8 @@ void sendPC(){
     sendData = "C2";
   }
 
-  if(sendData != ""){
+  //if(sendData != ""){
     Serial.println(sendData);
     sendData = "";
-  }
+  //}
 }
